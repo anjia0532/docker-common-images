@@ -33,23 +33,23 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Asia/Shanghai
 WORKDIR /root/
 COPY --from=builder /opt/taos .
-COPY --from=builder /etc/apt/sources.list /etc/apt/sources.list
+# COPY --from=builder /etc/apt/sources.list /etc/apt/sources.list
 
 RUN cd /root/TDengine-server/ && \
     ./install.sh -v server -e no && \
+    ## change timezone
+    # apt update &&\
+    # apt install tzdata -y && \
+    # ln -fs "/usr/share/zoneinfo/${TZ}" /etc/localtime && \
+    # echo ${TZ} > /etc/timezone && \
+    # dpkg-reconfigure tzdata && \
+    apt-get clean autoclean && apt-get autoremove --purge -y && \
     ## cleanup compile env
     cd /tmp && \
     rm -rf /tmp/*  && \
     rm -rf /var/cache/*  && \
     rm -rf /var/lib/{apt,dpkg,cache,log}/  && \
-    rm -rf /root/TDengine-server/ && \
-    # change timezone
-    apt update &&\
-    apt install tzdata -y && \
-    ln -fs "/usr/share/zoneinfo/${TZ}" /etc/localtime && \
-    echo ${TZ} > /etc/timezone && \
-    dpkg-reconfigure tzdata && \
-    apt-get clean autoclean && apt-get autoremove --purge -y
+    rm -rf /root/TDengine-server/ 
 
 EXPOSE 6030 6031 6032 6033 6034 6035 6036 6037 6038 6039 6040 6041 6042
 
