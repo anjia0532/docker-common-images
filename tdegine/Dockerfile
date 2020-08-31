@@ -8,27 +8,29 @@ ENV LC_ALL=en_US.UTF-8
 ENV MIRROR_UBUNTU_HOST=mirrors.aliyun.com
 ENV DEBIAN_FRONTEND=noninteractive
 
-ARG TD_ENGINE_VERSION="ver-2.0.2.1"
+ARG TD_ENGINE_VERSION="2.0.2.2"
 ARG MIRROR=false
 ARG TZ=Asia/Shanghai
+ENV TD_FILE_NAME="ver-${TD_ENGINE_VERSION}"
 
 # if use mirror change to aliyun mirror site
 RUN if $MIRROR; then UBUNTU_HOST=${MIRROR_UBUNTU_HOST} ; sed -i "s/archive.ubuntu.com/${UBUNTU_HOST}/g" /etc/apt/sources.list ; fi && \
     apt update &&\
     # install cmake build-essential
-    apt-get install -y cmake build-essential wget unzip && \
+    apt-get install -y cmake build-essential wget unzip git && \
     # download & compile & install tdegine
-    wget -nv --show-progress --progress=bar:force:noscroll -O /tmp/TDengine.zip  "https://github.com/taosdata/TDengine/archive/${TD_ENGINE_VERSION}.zip" && \
-    unzip /tmp/TDengine.zip -d /tmp/ && \
-    mv /tmp/TDengine-${TD_ENGINE_VERSION} /tmp/TDengine && \
-    mkdir -p /tmp/TDengine/debug && cd /tmp/TDengine/debug && \
-    cmake .. && cmake --build . && \
-    mkdir -p /tmp/TDengine/packaging/deb/init.d && \
-    cp /tmp/TDengine/packaging/deb/taosd /tmp/TDengine/packaging/deb/init.d/taosd && \
-    make install && \
+    git config --global advice.detachedHead false && \
+    git clone -b ${TD_FILE_NAME} --depth 1 --single-branch https://github.com/taosdata/TDengine.git /tmp/enterprise && \
+    sed -i -e '/makerpm/d;/makedeb/d;/jdbcdriver/d;' /tmp/enterprise/packaging/release.sh && \
+    cd /tmp/enterprise/ && \
+    /tmp/enterprise/packaging/release.sh -l lite -n ${TD_ENGINE_VERSION} && \ 
+    tar zxf /tmp/enterprise/release/TDengine-server-${TD_ENGINE_VERSION}-Linux-x64-Lite.tar.gz -C /tmp && \
+    cd /tmp/TDengine-server/ && \
+    ./install.sh -v server && \
     ## cleanup compile env
-    apt-get --purge remove -y cmake build-essential wget unzip && \
+    apt-get --purge remove -y cmake build-essential wget unzip git && \
     apt-get clean autoclean && apt-get autoremove --purge -y && \
+    cd /tmp && \
     rm -rf /tmp/*  && \
     rm -rf /var/cache/*  && \
     rm -rf /var/lib/{apt,dpkg,cache,log}/  && \
@@ -38,7 +40,7 @@ RUN if $MIRROR; then UBUNTU_HOST=${MIRROR_UBUNTU_HOST} ; sed -i "s/archive.ubunt
     echo ${TZ} > /etc/timezone && \
     dpkg-reconfigure tzdata
 
-EXPOSE 6030 6031 6032
+EXPOSE 6030 6031 6032 6033 6034 6035 6036 6037 6038 6039 6040 6041 6042
 
 VOLUME ["/var/lib/taos","/var/log/taos","/etc/taos/"]
 CMD ["taosd"]
