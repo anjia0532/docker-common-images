@@ -1,4 +1,4 @@
-FROM ubuntu:focal
+FROM ubuntu:focal AS builder
 
 LABEL maintainer="anjia0532@gmail.com"
 
@@ -23,22 +23,33 @@ RUN if $MIRROR; then UBUNTU_HOST=${MIRROR_UBUNTU_HOST} ; sed -i "s/archive.ubunt
     git clone -b ${TD_FILE_NAME} --depth 1 --single-branch https://github.com/taosdata/TDengine.git /tmp/enterprise && \
     sed -i -e '/makerpm/d;/makedeb/d;/jdbcdriver/d;' /tmp/enterprise/packaging/release.sh && \
     cd /tmp/enterprise/ && \
-    /tmp/enterprise/packaging/release.sh -l lite -n ${TD_ENGINE_VERSION} && \ 
-    tar zxf /tmp/enterprise/release/TDengine-server-${TD_ENGINE_VERSION}-Linux-x64-Lite.tar.gz -C /tmp && \
-    cd /tmp/TDengine-server/ && \
+    /tmp/enterprise/packaging/release.sh -l lite -n ${TD_ENGINE_VERSION} && \
+    mkdir -p /opt/taos && \
+    tar zxf /tmp/enterprise/release/TDengine-server-${TD_ENGINE_VERSION}-Linux-x64-Lite.tar.gz -C /opt/taos
+
+FROM ubuntu:focal
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Asia/Shanghai
+WORKDIR /root/
+COPY --from=builder /opt/taos .
+COPY --from=builder /etc/apt/sources.list /etc/apt/sources.list
+
+RUN cd /root/TDengine-server/ && \
     ./install.sh -v server -e no && \
     ## cleanup compile env
-    apt-get --purge remove -y cmake build-essential wget unzip git && \
-    apt-get clean autoclean && apt-get autoremove --purge -y && \
     cd /tmp && \
     rm -rf /tmp/*  && \
     rm -rf /var/cache/*  && \
     rm -rf /var/lib/{apt,dpkg,cache,log}/  && \
+    rm -rf /root/TDengine-server/ && \
     # change timezone
+    apt update &&\
     apt install tzdata -y && \
     ln -fs "/usr/share/zoneinfo/${TZ}" /etc/localtime && \
     echo ${TZ} > /etc/timezone && \
-    dpkg-reconfigure tzdata
+    dpkg-reconfigure tzdata && \
+    apt-get clean autoclean && apt-get autoremove --purge -y
 
 EXPOSE 6030 6031 6032 6033 6034 6035 6036 6037 6038 6039 6040 6041 6042
 
