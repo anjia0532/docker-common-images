@@ -26,7 +26,7 @@ RUN if $MIRROR; then UBUNTU_HOST=${MIRROR_UBUNTU_HOST} ; sed -i "s/archive.ubunt
     /tmp/enterprise/packaging/release.sh -l lite -n ${TD_ENGINE_VERSION} && \ 
     tar zxf /tmp/enterprise/release/TDengine-server-${TD_ENGINE_VERSION}-Linux-x64-Lite.tar.gz -C /tmp && \
     cd /tmp/TDengine-server/ && \
-    ./install.sh -v server && \
+    ./install.sh -v server -e no && \
     ## cleanup compile env
     apt-get --purge remove -y cmake build-essential wget unzip git && \
     apt-get clean autoclean && apt-get autoremove --purge -y && \
