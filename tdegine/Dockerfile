@@ -35,7 +35,6 @@ WORKDIR /root/
 COPY --from=builder /opt/taos .
 # COPY --from=builder /etc/apt/sources.list /etc/apt/sources.list
 
-$(ls network.sh | head -1)
 RUN cd /root/"$(ls /root/ | grep TDengine-server | head -1)" && \
     ./install.sh -v server -e no && \
     ## change timezone
