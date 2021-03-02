@@ -1,0 +1,1 @@
+docker build --build-arg TD_ENGINE_VERSION=$TD_ENGINE_VERSION -f $DOCKERFILE_PATH -t $IMAGE_NAME .
