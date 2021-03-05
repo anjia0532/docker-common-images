@@ -1,4 +1,4 @@
-FROM node:12-alpine as builder
+FROM node:12.16.3-alpine3.11 as builder
 
 LABEL maintainer="anjia0532@gmail.com"
 ARG YAPI_VERSION=master
@@ -9,9 +9,10 @@ RUN wget https://github.com/YMFE/yapi/archive/${YAPI_VERSION}.zip -O yapi-${YAPI
 RUN unzip yapi-${YAPI_VERSION}.zip && mv yapi-${YAPI_VERSION} vendors
 RUN cd /yapi/vendors && \
  cp config_example.json /yapi/config.json && \
- npm install --production --registry https://registry.npm.taobao.org
+ npm install --save node-sass@5.0.0 yapi-plugin-notifier yapi-plugin-export-docx-data yapi-plugin-add-user && \
+ npm install --production
 
-FROM node:12-alpine
+FROM node:12.16.3-alpine3.11
 
 LABEL maintainer="anjia0532@gmail.com"
 
