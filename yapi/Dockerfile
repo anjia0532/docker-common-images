@@ -7,10 +7,13 @@ WORKDIR /yapi
 RUN apk add --no-cache wget
 RUN wget https://github.com/YMFE/yapi/archive/${YAPI_VERSION}.zip -O yapi-${YAPI_VERSION}.zip
 RUN unzip yapi-${YAPI_VERSION}.zip && mv yapi-${YAPI_VERSION} vendors
+RUN npm install -g --registry https://registry.npm.taobao.org yapi-cli ykit
 RUN cd /yapi/vendors && \
- cp config_example.json /yapi/config.json && \
- npm install --save node-sass@5.0.0 yapi-plugin-notifier yapi-plugin-export-docx-data yapi-plugin-add-user && \
- npm install --production
+  cp config_example.json /yapi/config.json && \
+  npm install --production && \
+  yapi plugin --name yapi-plugin-notifier && \
+  yapi plugin --name yapi-plugin-export-docx-data && \
+  yapi plugin --name yapi-plugin-add-user
 
 FROM node:12.16.3-alpine3.11
 
