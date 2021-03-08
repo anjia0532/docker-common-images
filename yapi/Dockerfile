@@ -10,7 +10,7 @@ RUN unzip yapi-${YAPI_VERSION}.zip && mv yapi-${YAPI_VERSION} vendors
 RUN cd /yapi/vendors && \
  cp config_example.json /yapi/config.json && \
  npm install --save node-sass@5.0.0 yapi-plugin-notifier yapi-plugin-export-docx-data yapi-plugin-add-user && \
- npm install --production
+ npm install --production && sed -i -e 's/js\|jsx/jsd/g' ykit.config.js && npm run build-client
 
 FROM node:12.16.3-alpine3.11
 
