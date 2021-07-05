@@ -19,7 +19,7 @@ RUN if $MIRROR; then UBUNTU_HOST=${MIRROR_UBUNTU_HOST} ; sed -i "s/archive.ubunt
     apt-get install -y cmake build-essential wget unzip git && \
     # download & compile & install tdegine
     git config --global advice.detachedHead false && \
-    git clone -b ver-${TD_ENGINE_VERSION} --depth 1 --single-branch https://github.com/taosdata/TDengine.git /tmp/enterprise && \
+    git clone -b "ver-${TD_ENGINE_VERSION}" --depth 1 --single-branch https://github.com/taosdata/TDengine.git /tmp/enterprise && \
     sed -i -e '/makerpm/d;/makedeb/d;/jdbcdriver/d;' /tmp/enterprise/packaging/release.sh && \
     cd /tmp/enterprise/ && \
     /tmp/enterprise/packaging/release.sh -l lite -n ${TD_ENGINE_VERSION} && \
