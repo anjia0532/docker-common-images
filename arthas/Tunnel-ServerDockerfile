@@ -23,4 +23,4 @@ RUN if [ -n "$TIMEZONE" ]; then apk add --no-cache tzdata && \
 
 
 # Tini is now available at /sbin/tini
-ENTRYPOINT ["/sbin/tini", "--"]
+ENTRYPOINT ["/usr/bin/java","-jar","/opt/arthas/arthas-tunnel-server-fatjar.jar"]
