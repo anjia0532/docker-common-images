@@ -17,16 +17,22 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
+
       - name: Log in to GitHub Docker Registry
         uses: docker/login-action@v1
         with:
-          registry: docker.pkg.github.com
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.HUB_NAME }}
+          password: ${{ secrets.HUB_PWD }}
+
       - name: Build container image
         uses: docker/build-push-action@v2
         with:
+          context: tdengine/
           push: true
+          build-args: |
+            TD_ENGINE_VERSION=${{ secrets.TD_ENGINE_VERSION }}
           tags: |
-            docker.pkg.github.com/${{ github.repository }}/octo-image:${{ github.sha }}
-            docker.pkg.github.com/${{ github.repository }}/octo-image:${{ github.ref }}
+            anjia0532/tdengine:${{ secrets.TD_ENGINE_VERSION }}
+            anjia0532/tdengine:latest
+          cache-from: type=registry,ref=anjia0532/tdengine:latest
+          cache-to: type=inline
