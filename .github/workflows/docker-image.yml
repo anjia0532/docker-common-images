@@ -9,7 +9,7 @@ on:
 
 jobs:
   push_to_registry:
-    name: build and push tdengine
+    name: build and push docker images
     runs-on: ubuntu-latest
     permissions:
       packages: write
