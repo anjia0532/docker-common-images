@@ -44,8 +44,8 @@ jobs:
           file: arthas/Dockerfile
           push: true
           build-args: |
-            ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
             BASE_IMAGE=8-jdk-alpine
+            ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
           tags: |
             anjia0532/arthas-8-jdk-alpine:${{ secrets.ARTHAS_VERSION }}
             anjia0532/arthas-8-jdk-alpine:latest
@@ -59,13 +59,13 @@ jobs:
           file: arthas/Tunnel-ServerDockerfile
           push: true
           build-args: |
-            ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
             BASE_IMAGE=8-jdk-alpine
+            ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
           tags: |
             anjia0532/arthas-8-jdk-alpine:${{ secrets.ARTHAS_VERSION }}-tunnel-server
           cache-from: type=registry,ref=anjia0532/arthas-8-jdk-alpine:latest
           cache-to: type=inline
-          
+
       - name: Build arthas-11-jdk-alpine
         uses: docker/build-push-action@v2
         with:
@@ -73,12 +73,12 @@ jobs:
           file: arthas/Dockerfile
           push: true
           build-args: |
-            ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
             BASE_IMAGE=11-jdk-alpine
+            ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
           tags: |
-            anjia0532/arthas-8-jdk-alpine:${{ secrets.ARTHAS_VERSION }}
-            anjia0532/arthas-8-jdk-alpine:latest
-          cache-from: type=registry,ref=anjia0532/arthas-8-jdk-alpine:latest
+            anjia0532/arthas-11-jdk-alpine:${{ secrets.ARTHAS_VERSION }}
+            anjia0532/arthas-11-jdk-alpine:latest
+          cache-from: type=registry,ref=anjia0532/arthas-11-jdk-alpine:latest
           cache-to: type=inline
 
       - name: Build arthas-11-Tunnel-jdk-alpine
@@ -88,9 +88,9 @@ jobs:
           file: arthas/Tunnel-ServerDockerfile
           push: true
           build-args: |
-            ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
             BASE_IMAGE=11-jdk-alpine
+            ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
           tags: |
-            anjia0532/arthas-8-jdk-alpine:${{ secrets.ARTHAS_VERSION }}-tunnel-server
-          cache-from: type=registry,ref=anjia0532/arthas-8-jdk-alpine:latest
+            anjia0532/arthas-11-jdk-alpine:${{ secrets.ARTHAS_VERSION }}-tunnel-server
+          cache-from: type=registry,ref=anjia0532/arthas-11-jdk-alpine:latest
           cache-to: type=inline
