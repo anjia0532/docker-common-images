@@ -1,0 +1,18 @@
+ARG BASE_IMAGE=8-jdk-slim
+FROM openjdk:$BASE_IMAGE
+
+ARG ARTHAS_VERSION="3.3.9"
+ARG MIRROR=false
+ARG TIMEZONE=""
+
+ENV MAVEN_HOST=https://repo1.maven.org/maven2 \
+    MIRROR_MAVEN_HOST=https://maven.aliyun.com/repository/public
+
+# if use mirror change to aliyun mirror site
+RUN if $MIRROR; then MAVEN_HOST=${MIRROR_MAVEN_HOST} ; fi && \
+    # download & install arthas
+    mkdir -p /opt/arthas && \
+    wget -qO /opt/arthas/arthas-tunnel-server-fatjar.jar "${MAVEN_HOST}/com/taobao/arthas/arthas-tunnel-server/${ARTHAS_VERSION}/arthas-tunnel-server-${ARTHAS_VERSION}-fatjar.jar"
+
+# Tini is now available at /sbin/tini
+ENTRYPOINT ["/usr/bin/java","-jar","/opt/arthas/arthas-tunnel-server-fatjar.jar"]

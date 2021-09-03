@@ -70,7 +70,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: arthas
-          file: arthas/Dockerfile
+          file: arthas/Dockerfile-slim
           push: true
           build-args: |
             BASE_IMAGE=16-jdk-slim
@@ -85,7 +85,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: arthas
-          file: arthas/Tunnel-ServerDockerfile
+          file: arthas/Tunnel-ServerDockerfile-slim
           push: true
           build-args: |
             BASE_IMAGE=16-jdk-slim
@@ -100,7 +100,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: arthas
-          file: arthas/Dockerfile
+          file: arthas/Dockerfile-slim
           push: true
           build-args: |
             BASE_IMAGE=16-jdk-slim
@@ -115,7 +115,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: arthas
-          file: arthas/Tunnel-ServerDockerfile
+          file: arthas/Tunnel-ServerDockerfile-slim
           push: true
           build-args: |
             BASE_IMAGE=16-jdk-slim
@@ -130,7 +130,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: arthas
-          file: arthas/Dockerfile
+          file: arthas/Dockerfile-slim
           push: true
           build-args: |
             BASE_IMAGE=17-jdk-slim
@@ -145,7 +145,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: arthas
-          file: arthas/Tunnel-ServerDockerfile
+          file: arthas/Tunnel-ServerDockerfile-slim
           push: true
           build-args: |
             BASE_IMAGE=17-jdk-slim
@@ -159,7 +159,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: arthas
-          file: arthas/Dockerfile
+          file: arthas/Dockerfile-slim
           push: true
           build-args: |
             BASE_IMAGE=18-jdk-slim
@@ -174,7 +174,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: arthas
-          file: arthas/Tunnel-ServerDockerfile
+          file: arthas/Tunnel-ServerDockerfile-slim
           push: true
           build-args: |
             BASE_IMAGE=18-jdk-slim
