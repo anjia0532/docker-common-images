@@ -8,8 +8,8 @@ on:
     types: started
 
 jobs:
-  push_to_registry:
-    name: Push Docker image to GitHub Packages
+  - push_to_registry:
+    name: build and push tdengine
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -35,4 +35,45 @@ jobs:
             anjia0532/tdengine:${{ secrets.TD_ENGINE_VERSION }}
             anjia0532/tdengine:latest
           cache-from: type=registry,ref=anjia0532/tdengine:latest
+          cache-to: type=inline
+
+  - push_to_registry:
+    name: build and push arthas
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      - name: Log in to GitHub Docker Registry
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.HUB_NAME }}
+          password: ${{ secrets.HUB_PWD }}
+
+      - name: Build arthas-8-jdk-alpine
+        uses: docker/build-push-action@v2
+        with:
+          context: arthas/Dockerfile
+          push: true
+          build-args: |
+            ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
+          tags: |
+            anjia0532/arthas-8-jdk-alpine:${{ secrets.ARTHAS_VERSION }}
+            anjia0532/arthas-8-jdk-alpine:latest
+          cache-from: type=registry,ref=anjia0532/arthas-8-jdk-alpine:latest
+          cache-to: type=inline
+
+      - name: Build arthas-8-Tunnel-jdk-alpine
+        uses: docker/build-push-action@v2
+        with:
+          context: arthas/Tunnel-ServerDockerfile
+          push: true
+          build-args: |
+            ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
+          tags: |
+            anjia0532/arthas-8-jdk-alpine:${{ secrets.ARTHAS_VERSION }}-tunnel-server
+          cache-from: type=registry,ref=anjia0532/arthas-8-jdk-alpine:latest
           cache-to: type=inline
