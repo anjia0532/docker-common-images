@@ -73,7 +73,7 @@ jobs:
           file: arthas/Dockerfile-slim
           push: true
           build-args: |
-            BASE_IMAGE=16-jdk-slim
+            BASE_IMAGE=11-jdk-slim
             ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
           tags: |
             anjia0532/arthas-11-jdk-slim:${{ secrets.ARTHAS_VERSION }}
@@ -88,7 +88,7 @@ jobs:
           file: arthas/Tunnel-ServerDockerfile-slim
           push: true
           build-args: |
-            BASE_IMAGE=16-jdk-slim
+            BASE_IMAGE=11-jdk-slim
             ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
           tags: |
             anjia0532/arthas-11-jdk-slim:${{ secrets.ARTHAS_VERSION }}-tunnel-server
