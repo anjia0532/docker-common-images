@@ -4,6 +4,7 @@ FROM openjdk:$BASE_IMAGE
 ARG ARTHAS_VERSION="3.3.9"
 ARG MIRROR=false
 ARG TIMEZONE=""
+ENV TZ=Asia/Shanghai
 
 ENV MAVEN_HOST=https://repo1.maven.org/maven2 \
     MIRROR_MAVEN_HOST=https://maven.aliyun.com/repository/public
@@ -15,11 +16,15 @@ RUN  apt-get update -y && \
      apt-get clean && \
      apt install wget -y
 
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 # if use mirror change to aliyun mirror site
 RUN if $MIRROR; then MAVEN_HOST=${MIRROR_MAVEN_HOST} ; fi && \
     # download & install arthas
     mkdir -p /opt/arthas && \
     wget -qO /opt/arthas/arthas-tunnel-server-fatjar.jar "${MAVEN_HOST}/com/taobao/arthas/arthas-tunnel-server/${ARTHAS_VERSION}/arthas-tunnel-server-${ARTHAS_VERSION}-fatjar.jar"
 
+RUN echo -e '#!/bin/bash\n java -jar /opt/arthas/arthas-tunnel-server-fatjar.jar'>/opt/arthas/entrypoint.sh && chmod 777 /opt/arthas/entrypoint.sh
+
 # Tini is now available at /sbin/tini
-ENTRYPOINT ["/usr/bin/java","-jar","/opt/arthas/arthas-tunnel-server-fatjar.jar"]
+ENTRYPOINT ["/opt/arthas/entrypoint.sh"]
