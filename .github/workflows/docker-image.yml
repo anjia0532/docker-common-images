@@ -8,7 +8,7 @@ on:
     types: started
 
 jobs:
-  - push_to_registry:
+  push_to_registry:
     name: build and push tdengine
     runs-on: ubuntu-latest
     permissions:
@@ -24,7 +24,7 @@ jobs:
           username: ${{ secrets.HUB_NAME }}
           password: ${{ secrets.HUB_PWD }}
 
-      - name: Build container image
+      - name: Build tdengine image
         uses: docker/build-push-action@v2
         with:
           context: tdengine/
@@ -36,22 +36,6 @@ jobs:
             anjia0532/tdengine:latest
           cache-from: type=registry,ref=anjia0532/tdengine:latest
           cache-to: type=inline
-
-  - push_to_registry:
-    name: build and push arthas
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
-      contents: read
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v2
-
-      - name: Log in to GitHub Docker Registry
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.HUB_NAME }}
-          password: ${{ secrets.HUB_PWD }}
 
       - name: Build arthas-8-jdk-alpine
         uses: docker/build-push-action@v2
