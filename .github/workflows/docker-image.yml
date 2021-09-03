@@ -73,7 +73,7 @@ jobs:
           file: arthas/Dockerfile
           push: true
           build-args: |
-            BASE_IMAGE=11-jdk-alpine
+            BASE_IMAGE=11-jdk-slim
             ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
           tags: |
             anjia0532/arthas-11-jdk-alpine:${{ secrets.ARTHAS_VERSION }}
@@ -93,4 +93,93 @@ jobs:
           tags: |
             anjia0532/arthas-11-jdk-alpine:${{ secrets.ARTHAS_VERSION }}-tunnel-server
           cache-from: type=registry,ref=anjia0532/arthas-11-jdk-alpine:latest
+          cache-to: type=inline
+
+          
+      - name: Build arthas-16-jdk-alpine
+        uses: docker/build-push-action@v2
+        with:
+          context: arthas
+          file: arthas/Dockerfile
+          push: true
+          build-args: |
+            BASE_IMAGE=16-jdk-slim
+            ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
+          tags: |
+            anjia0532/arthas-16-jdk-alpine:${{ secrets.ARTHAS_VERSION }}
+            anjia0532/arthas-16-jdk-alpine:latest
+          cache-from: type=registry,ref=anjia0532/arthas-16-jdk-alpine:latest
+          cache-to: type=inline
+
+      - name: Build arthas-16-Tunnel-jdk-alpine
+        uses: docker/build-push-action@v2
+        with:
+          context: arthas
+          file: arthas/Tunnel-ServerDockerfile
+          push: true
+          build-args: |
+            BASE_IMAGE=16-jdk-alpine
+            ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
+          tags: |
+            anjia0532/arthas-16-jdk-alpine:${{ secrets.ARTHAS_VERSION }}-tunnel-server
+          cache-from: type=registry,ref=anjia0532/arthas-16-jdk-alpine:latest
+          cache-to: type=inline
+
+          
+      - name: Build arthas-17-jdk-alpine
+        uses: docker/build-push-action@v2
+        with:
+          context: arthas
+          file: arthas/Dockerfile
+          push: true
+          build-args: |
+            BASE_IMAGE=17-jdk-slim
+            ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
+          tags: |
+            anjia0532/arthas-17-jdk-alpine:${{ secrets.ARTHAS_VERSION }}
+            anjia0532/arthas-17-jdk-alpine:latest
+          cache-from: type=registry,ref=anjia0532/arthas-17-jdk-alpine:latest
+          cache-to: type=inline
+
+      - name: Build arthas-17-Tunnel-jdk-alpine
+        uses: docker/build-push-action@v2
+        with:
+          context: arthas
+          file: arthas/Tunnel-ServerDockerfile
+          push: true
+          build-args: |
+            BASE_IMAGE=17-jdk-alpine
+            ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
+          tags: |
+            anjia0532/arthas-17-jdk-alpine:${{ secrets.ARTHAS_VERSION }}-tunnel-server
+          cache-from: type=registry,ref=anjia0532/arthas-17-jdk-alpine:latest
+          cache-to: type=inline
+
+      - name: Build arthas-18-jdk-alpine
+        uses: docker/build-push-action@v2
+        with:
+          context: arthas
+          file: arthas/Dockerfile
+          push: true
+          build-args: |
+            BASE_IMAGE=18-jdk-slim
+            ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
+          tags: |
+            anjia0532/arthas-18-jdk-alpine:${{ secrets.ARTHAS_VERSION }}
+            anjia0532/arthas-18-jdk-alpine:latest
+          cache-from: type=registry,ref=anjia0532/arthas-18-jdk-alpine:latest
+          cache-to: type=inline
+
+      - name: Build arthas-18-Tunnel-jdk-alpine
+        uses: docker/build-push-action@v2
+        with:
+          context: arthas
+          file: arthas/Tunnel-ServerDockerfile
+          push: true
+          build-args: |
+            BASE_IMAGE=18-jdk-alpine
+            ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
+          tags: |
+            anjia0532/arthas-18-jdk-alpine:${{ secrets.ARTHAS_VERSION }}-tunnel-server
+          cache-from: type=registry,ref=anjia0532/arthas-18-jdk-alpine:latest
           cache-to: type=inline
