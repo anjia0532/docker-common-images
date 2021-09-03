@@ -24,7 +24,7 @@ RUN if $MIRROR; then MAVEN_HOST=${MIRROR_MAVEN_HOST} ; fi && \
     mkdir -p /opt/arthas && \
     wget -qO /opt/arthas/arthas-tunnel-server-fatjar.jar "${MAVEN_HOST}/com/taobao/arthas/arthas-tunnel-server/${ARTHAS_VERSION}/arthas-tunnel-server-${ARTHAS_VERSION}-fatjar.jar"
 
-RUN echo -e '#!/bin/bash\n java -jar /opt/arthas/arthas-tunnel-server-fatjar.jar'>/opt/arthas/entrypoint.sh && chmod 777 /opt/arthas/entrypoint.sh
+RUN echo '#!/usr/bin/env bash\njava -jar /opt/arthas/arthas-tunnel-server-fatjar.jar'>/opt/arthas/entrypoint.sh && chmod 777 /opt/arthas/entrypoint.sh
 
 # Tini is now available at /sbin/tini
 ENTRYPOINT ["/opt/arthas/entrypoint.sh"]
