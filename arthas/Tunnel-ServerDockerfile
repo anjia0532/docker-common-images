@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine
+FROM openjdk:$BASE_IMAGE
 
 ARG ARTHAS_VERSION="3.3.9"
 ARG MIRROR=false
