@@ -94,37 +94,6 @@ jobs:
             anjia0532/arthas-11-jdk-slim:${{ secrets.ARTHAS_VERSION }}-tunnel-server
           cache-from: type=registry,ref=anjia0532/arthas-11-jdk-slim:latest
           cache-to: type=inline
-
-          
-      - name: Build arthas-16-jdk-slim
-        uses: docker/build-push-action@v2
-        with:
-          context: arthas
-          file: arthas/Dockerfile-slim
-          push: true
-          build-args: |
-            BASE_IMAGE=16-jdk-slim
-            ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
-          tags: |
-            anjia0532/arthas-16-jdk-slim:${{ secrets.ARTHAS_VERSION }}
-            anjia0532/arthas-16-jdk-slim:latest
-          cache-from: type=registry,ref=anjia0532/arthas-16-jdk-slim:latest
-          cache-to: type=inline
-
-      - name: Build arthas-16-Tunnel-jdk-slim
-        uses: docker/build-push-action@v2
-        with:
-          context: arthas
-          file: arthas/Tunnel-ServerDockerfile-slim
-          push: true
-          build-args: |
-            BASE_IMAGE=16-jdk-slim
-            ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
-          tags: |
-            anjia0532/arthas-16-jdk-slim:${{ secrets.ARTHAS_VERSION }}-tunnel-server
-          cache-from: type=registry,ref=anjia0532/arthas-16-jdk-slim:latest
-          cache-to: type=inline
-
           
       - name: Build arthas-17-jdk-slim
         uses: docker/build-push-action@v2
@@ -153,33 +122,4 @@ jobs:
           tags: |
             anjia0532/arthas-17-jdk-slim:${{ secrets.ARTHAS_VERSION }}-tunnel-server
           cache-from: type=registry,ref=anjia0532/arthas-17-jdk-slim:latest
-          cache-to: type=inline
-
-      - name: Build arthas-18-jdk-slim
-        uses: docker/build-push-action@v2
-        with:
-          context: arthas
-          file: arthas/Dockerfile-slim
-          push: true
-          build-args: |
-            BASE_IMAGE=18-jdk-slim
-            ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
-          tags: |
-            anjia0532/arthas-18-jdk-slim:${{ secrets.ARTHAS_VERSION }}
-            anjia0532/arthas-18-jdk-slim:latest
-          cache-from: type=registry,ref=anjia0532/arthas-18-jdk-slim:latest
-          cache-to: type=inline
-
-      - name: Build arthas-18-Tunnel-jdk-slim
-        uses: docker/build-push-action@v2
-        with:
-          context: arthas
-          file: arthas/Tunnel-ServerDockerfile-slim
-          push: true
-          build-args: |
-            BASE_IMAGE=18-jdk-slim
-            ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
-          tags: |
-            anjia0532/arthas-18-jdk-slim:${{ secrets.ARTHAS_VERSION }}-tunnel-server
-          cache-from: type=registry,ref=anjia0532/arthas-18-jdk-slim:latest
           cache-to: type=inline
