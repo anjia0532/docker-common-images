@@ -1,11 +1,28 @@
 name: Docker Image CI
 
 on:
-  repository_dispatch:
-  release:
-    types: published
-  watch:
-    types: started
+  workflow_dispatch:
+    inputs:
+      name:
+        type: choice
+        description: Image Type
+        options:
+          - arthas-alpine
+          - arthas-slim
+          - arthas-tunnel-server
+          - arthas-tunnel-server-slim
+          - sentinel
+          - tdengine
+          - ffmpeg
+          - nginx
+          - openresty-rebel
+          - yapi
+      version:
+        description: 'Version of application'
+        required: true
+      baseImage:
+        description: 'Version of Image'
+        required: false
 
 jobs:
   push_to_registry:
@@ -24,102 +41,77 @@ jobs:
           username: ${{ secrets.HUB_NAME }}
           password: ${{ secrets.HUB_PWD }}
 
-      - name: Build tdengine image
-        uses: docker/build-push-action@v2
+      - name: Build Arthas-Tunnel-Jdk-Slim
+        uses: docker/build-push-action@v3
+        if: github.event.inputs.name == 'arthas-tunnel-server-slim'
         with:
-          context: tdengine/
+          context: arthas
+          file: arthas/Tunnel-ServerDockerfile-slim
           push: true
           build-args: |
-            TD_ENGINE_VERSION=${{ secrets.TD_ENGINE_VERSION }}
+            BASE_IMAGE=${{ github.event.inputs.baseImage }}
+            ARTHAS_VERSION=${{ github.event.inputs.version }}
           tags: |
-            anjia0532/tdengine:${{ secrets.TD_ENGINE_VERSION }}
-            anjia0532/tdengine:latest
-          cache-from: type=registry,ref=anjia0532/tdengine:latest
+            anjia0532/arthas-${{ github.event.inputs.baseImage }}:${{ github.event.inputs.version }}-tunnel-server
+          cache-from: type=registry,ref=anjia0532/arthas-${{ github.event.inputs.baseImage }}:latest
           cache-to: type=inline
 
-      - name: Build arthas-8-jdk-alpine
-        uses: docker/build-push-action@v2
+      - name: Build Arthas-Jdk-Slim
+        uses: docker/build-push-action@v3
+        if: github.event.inputs.name == 'arthas-slim'
+        with:
+          context: arthas
+          file: arthas/Dockerfile-slim
+          push: true
+          build-args: |
+            BASE_IMAGE=${{ github.event.inputs.baseImage }}
+            ARTHAS_VERSION=${{ github.event.inputs.version }}
+          tags: |
+            anjia0532/arthas-${{ github.event.inputs.baseImage }}:${{ github.event.inputs.version }}
+            anjia0532/arthas-${{ github.event.inputs.baseImage }}:latest
+          cache-from: type=registry,ref=anjia0532/arthas-${{ github.event.inputs.baseImage }}:latest
+          cache-to: type=inline
+
+      - name: Build Arthas-Jdk-Alpine
+        uses: docker/build-push-action@v3
+        if: github.event.inputs.name == 'arthas-alpine'
         with:
           context: arthas
           file: arthas/Dockerfile
           push: true
           build-args: |
-            BASE_IMAGE=8-jdk-alpine
-            ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
+            BASE_IMAGE=${{ github.event.inputs.baseImage }}
+            ARTHAS_VERSION=${{ github.event.inputs.version }}
           tags: |
-            anjia0532/arthas-8-jdk-alpine:${{ secrets.ARTHAS_VERSION }}
-            anjia0532/arthas-8-jdk-alpine:latest
-          cache-from: type=registry,ref=anjia0532/arthas-8-jdk-alpine:latest
+            anjia0532/arthas-${{ github.event.inputs.baseImage }}:${{ github.event.inputs.version }}
+            anjia0532/arthas-${{ github.event.inputs.baseImage }}:latest
+          cache-from: type=registry,ref=anjia0532/arthas-${{ github.event.inputs.baseImage }}:latest
           cache-to: type=inline
 
-      - name: Build arthas-8-Tunnel-jdk-alpine
-        uses: docker/build-push-action@v2
+      - name: Build tdengine image
+        uses: docker/build-push-action@v3
+        if: github.event.inputs.name == 'tdengine'
         with:
-          context: arthas
-          file: arthas/Tunnel-ServerDockerfile
+          context: tdengine/
           push: true
           build-args: |
-            BASE_IMAGE=8-jdk-alpine
-            ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
+            TD_ENGINE_VERSION=${{ github.event.inputs.version }}
           tags: |
-            anjia0532/arthas-8-jdk-alpine:${{ secrets.ARTHAS_VERSION }}-tunnel-server
-          cache-from: type=registry,ref=anjia0532/arthas-8-jdk-alpine:latest
+            anjia0532/tdengine:${{ github.event.inputs.version }}
+            anjia0532/tdengine:latest
+          cache-from: type=registry,ref=anjia0532/tdengine:latest
           cache-to: type=inline
 
-      - name: Build arthas-11-jdk-slim
-        uses: docker/build-push-action@v2
+      - name: Build alibaba sentinel image
+        uses: docker/build-push-action@v3
+        if: github.event.inputs.name == 'sentinel'
         with:
-          context: arthas
-          file: arthas/Dockerfile-slim
+          context: sentinel/
           push: true
           build-args: |
-            BASE_IMAGE=11-jdk-slim
-            ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
+            SENTINEL_VERSION=${{ github.event.inputs.version }}
           tags: |
-            anjia0532/arthas-11-jdk-slim:${{ secrets.ARTHAS_VERSION }}
-            anjia0532/arthas-11-jdk-slim:latest
-          cache-from: type=registry,ref=anjia0532/arthas-11-jdk-slim:latest
-          cache-to: type=inline
-
-      - name: Build arthas-11-Tunnel-jdk-slim
-        uses: docker/build-push-action@v2
-        with:
-          context: arthas
-          file: arthas/Tunnel-ServerDockerfile-slim
-          push: true
-          build-args: |
-            BASE_IMAGE=11-jdk-slim
-            ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
-          tags: |
-            anjia0532/arthas-11-jdk-slim:${{ secrets.ARTHAS_VERSION }}-tunnel-server
-          cache-from: type=registry,ref=anjia0532/arthas-11-jdk-slim:latest
-          cache-to: type=inline
-          
-      - name: Build arthas-17-jdk-slim
-        uses: docker/build-push-action@v2
-        with:
-          context: arthas
-          file: arthas/Dockerfile-slim
-          push: true
-          build-args: |
-            BASE_IMAGE=17-jdk-slim
-            ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
-          tags: |
-            anjia0532/arthas-17-jdk-slim:${{ secrets.ARTHAS_VERSION }}
-            anjia0532/arthas-17-jdk-slim:latest
-          cache-from: type=registry,ref=anjia0532/arthas-17-jdk-slim:latest
-          cache-to: type=inline
-
-      - name: Build arthas-17-Tunnel-jdk-slim
-        uses: docker/build-push-action@v2
-        with:
-          context: arthas
-          file: arthas/Tunnel-ServerDockerfile-slim
-          push: true
-          build-args: |
-            BASE_IMAGE=17-jdk-slim
-            ARTHAS_VERSION=${{ secrets.ARTHAS_VERSION }}
-          tags: |
-            anjia0532/arthas-17-jdk-slim:${{ secrets.ARTHAS_VERSION }}-tunnel-server
-          cache-from: type=registry,ref=anjia0532/arthas-17-jdk-slim:latest
+            anjia0532/sentinel-docker:${{ github.event.inputs.version }}
+            anjia0532/sentinel-docker:latest
+          cache-from: type=registry,ref=anjia0532/sentinel-docker:latest
           cache-to: type=inline
