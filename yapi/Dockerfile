@@ -1,11 +1,11 @@
 FROM node:12.16.3-alpine3.11 as builder
 
 LABEL maintainer="anjia0532@gmail.com"
-ARG YAPI_VERSION=master
+ARG YAPI_VERSION=1.12.0
 
 WORKDIR /yapi
 RUN apk add --no-cache wget
-RUN wget https://github.com/YMFE/yapi/archive/${YAPI_VERSION}.zip -O yapi-${YAPI_VERSION}.zip
+RUN wget https://github.com/YMFE/yapi/archive/v${YAPI_VERSION}.zip -O yapi-${YAPI_VERSION}.zip
 RUN unzip yapi-${YAPI_VERSION}.zip && mv yapi-${YAPI_VERSION} vendors
 RUN cd /yapi/vendors && \
  cp config_example.json /yapi/config.json && \
