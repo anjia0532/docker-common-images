@@ -17,6 +17,7 @@ on:
           - nginx
           - openresty-rebel
           - yapi
+          - curator
       version:
         description: 'Version of application'
         required: true
@@ -114,6 +115,20 @@ jobs:
             anjia0532/sentinel-docker:${{ github.event.inputs.version }}
             anjia0532/sentinel-docker:latest
           cache-from: type=registry,ref=anjia0532/sentinel-docker:latest
+          cache-to: type=inline
+
+      - name: Build elastic curator image
+        uses: docker/build-push-action@v3
+        if: github.event.inputs.name == 'curator'
+        with:
+          context: curator/
+          push: true
+          build-args: |
+            CURATOR_VERSION=${{ github.event.inputs.version }}
+          tags: |
+            anjia0532/docker-curator:${{ github.event.inputs.version }}
+            anjia0532/docker-curator:latest
+          cache-from: type=registry,ref=anjia0532/docker-curator:latest
           cache-to: type=inline
 
       - name: Build yapi image
