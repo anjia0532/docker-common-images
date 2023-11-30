@@ -20,7 +20,7 @@ ENV TZ="Asia/Shanghai"
 WORKDIR /yapi/vendors
 COPY --from=builder /yapi/vendors /yapi/vendors
 COPY entrypoint.sh /yapi/vendors
-RUN chmod +x /yapi/vendors
+RUN chmod +x /yapi/vendors &&  chmod +x /yapi/vendors/yapi/vendors/entrypoint.sh
 EXPOSE 3000
 ENTRYPOINT ["/yapi/vendors/entrypoint.sh"]
 
