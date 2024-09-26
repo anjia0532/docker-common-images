@@ -7,6 +7,7 @@ on:
         type: choice
         description: Image Type
         options:
+          - synergy-serial
           - arthas-alpine
           - arthas-slim
           - arthas-tunnel-server
@@ -41,6 +42,20 @@ jobs:
         with:
           username: ${{ secrets.HUB_NAME }}
           password: ${{ secrets.HUB_PWD }}
+
+      - name: Build Synergy-Serial image
+        uses: docker/build-push-action@v3
+        if: github.event.inputs.name == 'synergy-serial'
+        with:
+          context: arthas
+          file: synergy-serial/Dockerfile
+          push: true
+          build-args: |
+            SYNERGY_VERSION=${{ github.event.inputs.version }}
+          tags: |
+            anjia0532/synergy-serial:${{ github.event.inputs.version }}
+          cache-from: type=registry,ref=anjia0532/synergy-serial:latest
+          cache-to: type=inline
 
       - name: Build Arthas-Tunnel-Jdk-Slim
         uses: docker/build-push-action@v3
