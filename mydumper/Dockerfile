@@ -12,3 +12,9 @@ RUN   sed -e 's|^mirrorlist=|#mirrorlist=|g' \
     dnf makecache  && \
     yum install s3fs-fuse mysql -y && \
     yum clean all
+
+COPY ./backup.sh /app/backup.sh
+
+RUN chmod +x /app/backup.sh
+
+CMD ["/bin/bash", "/app/backup.sh"]
