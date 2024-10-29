@@ -7,6 +7,7 @@ on:
         type: choice
         description: Image Type
         options:
+          - mydumper
           - synergy-serial
           - arthas-alpine
           - arthas-slim
@@ -42,6 +43,20 @@ jobs:
         with:
           username: ${{ secrets.HUB_NAME }}
           password: ${{ secrets.HUB_PWD }}
+
+      - name: Build Mydumper image
+        uses: docker/build-push-action@v3
+        if: github.event.inputs.name == 'mydumper'
+        with:
+          context: mydumper
+          file: mydumper/Dockerfile
+          push: true
+          build-args: |
+            BASE_VERSION=${{ github.event.inputs.version }}
+          tags: |
+            anjia0532/mydumper:${{ github.event.inputs.version }}
+          cache-from: type=registry,ref=anjia0532/mydumper:latest
+          cache-to: type=inline
 
       - name: Build Synergy-Serial image
         uses: docker/build-push-action@v3
