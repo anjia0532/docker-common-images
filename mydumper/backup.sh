@@ -59,6 +59,7 @@ aliyun_endpoint=${ALIYUN_ENDPOINT}
 # 如果配置了阿里云oss，则使用s3fs挂载oss
 if [ ! -z "$aliyun_access_key" ] && [ ! -z "$aliyun_secret_key" ] && [ ! -z "$aliyun_bucket" ] && [ ! -z "$aliyun_endpoint" ]
 then
+  mkdir -p ${bak_dir}
   echo ${aliyun_access_key}:${aliyun_secret_key} > ${HOME}/.passwd-s3fs
   chmod 600 ${HOME}/.passwd-s3fs
   s3fs ${aliyun_bucket} ${bak_dir} -o passwd_file=$HOME/.passwd-s3fs -ourl=${aliyun_endpoint}
