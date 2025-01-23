@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -e
+# MySQL备份恢复：多线程mydumper工具 http://www.ywnds.com/?p=7267
 
 RED='\033[0;31m'
 NC='\033[0m' # No Color
@@ -68,7 +69,7 @@ fi
 total_backup(){
   total_dir=${bak_dir}/total_data_${ctime}
   mkdir -p ${total_dir}
-  mydumper --host ${host} --port ${port} --user ${user} --password ${password} --less-locking --logfile ${total_dir}/${log_file} --threads ${threads} --outputdir ${total_dir} && \
+  mydumper --host ${host} --port ${port} --user ${user} --password ${password} --less-locking --logfile ${bak_dir}/${log_file} --chunk-filesize 5120 --threads ${threads} --outputdir ${total_dir} && \
   echo "latest_dir=${total_dir}" > ${total_dir}/$info_file
 
   pos=`awk '/^Position/{print $3}' ${total_dir}/metadata`
@@ -81,7 +82,7 @@ db_backup(){
   total_dir=${bak_dir}/total_data_${ctime}
   for db in $dbs ;do
     mkdir -p ${total_dir}/${db}
-    mydumper --host ${host} --port ${port} --user ${user} --password ${password} --less-locking --logfile ${total_dir}/${log_file} --threads ${threads} --outputdir ${total_dir}/${db} --database ${db} && \
+    mydumper --host ${host} --port ${port} --user ${user} --password ${password} --less-locking --logfile ${bak_dir}/${log_file} --chunk-filesize 5120 --threads ${threads} --outputdir ${total_dir}/${db} --database ${db} && \
     echo "latest_dir=${total_dir}/${db}" > ${total_dir}/${db}/${info_file}
 
     pos=`awk '/^Position/{print $3}' ${total_dir}/${db}/metadata`
