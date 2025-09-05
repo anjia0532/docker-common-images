@@ -15,4 +15,4 @@ RUN wget -O /tmp/synergy-serial.tar.gz https://github.com/anjia0532/synergy-seri
 
 # CMD node -e 'const synergySerial = require("synergy-serial");console.log(synergySerial({name: "Humairaa Novak", userLimit: 99, email: "angZh@example.com"}));'
 
-CMD node -e 'const synergySerial = require(".");console.log(synergySerial());'
+CMD node -e 'const synergySerial = require(".");console.log(synergySerial({name: "Humairaa Novak", userLimit: 99, email: "angZh@example.com", version: 3, edition: "pro"}));'
