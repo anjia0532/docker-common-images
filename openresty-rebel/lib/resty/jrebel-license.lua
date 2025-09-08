@@ -6,7 +6,7 @@ local str                 = require("resty.string")
 local base64_encode       = ngx.encode_base64
 local json_encode         = json.encode
 local json_decode         = json.decode
-json.encode_empty_table_as_object(false) 
+json.encode_empty_table_as_object(false)
 
 local _M                  = {}
 
@@ -38,7 +38,7 @@ jzefE9sKUw==
 ]]
 
 
-_M._VERSION               = '0.02'
+_M._VERSION               = '0.03'
 
 local mt                  = { __index = _M }
 
@@ -101,19 +101,29 @@ local route = switch {
   ["/rpc/releaseTicket.action"] = function() return releaseTicketHandler() end,
   default = function () ngx.exit(ngx.HTTP_FORBIDDEN) end
 }
+-- UUID4生成函数
+function uuid4()
+  local template = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
+  return string.gsub(template, '[xy]', function(c)
+    local v = (c == 'x') and math.random(0, 0xf) or math.random(8, 0xb)
+    return string.format('%x', v)
+  end)
+end
 
 function indexHandler()
   ngx.header.content_type   = "text/html; charset=utf-8"
-  local req = ngx.var.scheme .. "://" .. ngx.var.host 
+  local req = ngx.var.scheme .. "://" .. ngx.var.host
   -- .. ":" .. ngx.var.server_port
   if not (( ngx.var.scheme == 'https' and ngx.var.server_port == '443' ) or (ngx.var.scheme == 'http' and ngx.var.server_port == '80')) then
-   req = req .. ":" .. ngx.var.server_port 
+   req = req .. ":" .. ngx.var.server_port
   end
   req = req .. "/"
+
   ngx.print("<h3>JetBrains Activation address was: " .. req .. "</h3>")
   ngx.print("<h3>JRebel 7.1 and earlier version Activation address was: ".. req .."{tokenname}, with any email.</h3>")
-  ngx.print("<h3>JRebel 2018.1 and later version Activation address was:".. req .."{guid}(eg:" .. req .. "dd5f6ce0-8ed9-11e8-9eb6-529269fb1459), with any email.</h3>")
+  ngx.print("<h3>JRebel 2018.1 and later version Activation address was:".. req .."{guid}(eg:" .. req .. uuid4() .. "), with any email.</h3>")
 end
+
 -- ngx.req.read_body()
 -- local args, err = ngx.req.get_post_args()
 -- local args, err = ngx.req.get_uri_args()
@@ -121,17 +131,22 @@ function jrebelLeasesHandler()
   ngx.header.content_type = "application/json; charset=utf-8"
   ngx.req.read_body()
   local args, err = ngx.req.get_post_args()
-  local clientRandomness = args["randomness"]
+
   local username = args["username"]
-  local guid = args["guid"]
   local offline = args["offline"] or false
+  local product = args["product"]
+  if product == "XRebel" then
+      offline = false
+  end
+  local guid = args["guid"]
+  local offlineDays = args["offlineDays"]
   local validFrom = "null"
   local validUntil = "null"
   if offline then
     local clientTime = args["clientTime"] or 0
-    -- 180 * 24 * 60 * 60 * 1000 = 180 days
+    -- 86400000 = 24 * 60 * 60 * 1000 = 1 days
     validFrom = clientTime
-    validUntil = clientTime + 15552000000 
+    validUntil = clientTime + (offlineDays or 180) * 86400000
   end
   local clientRandomness = args["randomness"]
   local resp = [[
@@ -155,7 +170,7 @@ function jrebelLeasesHandler()
       "zeroIds":[],
       "licenseValidFrom":1490544001000,
       "licenseValidUntil":1691839999000
-    }    
+    }
   ]]
 
   if not clientRandomness or not username or not guid then
@@ -185,14 +200,15 @@ function jrebelLeases1Handler()
   ngx.header.content_type = "application/json; charset=utf-8"
   local args, err = ngx.req.get_uri_args()
   local username = args['username']
-  local resp =  {
-      ["serverVersion"] = "3.2.4",
-      ["serverProtocolVersion"]= "1.1",
-      ["serverGuid"]= "a1b4aea8-b031-4302-b602-670a990272cb",
-      ["groupType"]= "managed",
-      ["statusCode"]= "SUCCESS",
-      ["msg"]= "null",
-      ["statusMessage"]= "null"
+  local resp = {
+    ["serverVersion"] = "3.2.4",
+    ["serverProtocolVersion"] = "1.1",
+    ["serverGuid"] = "a1b4aea8-b031-4302-b602-670a990272cb",
+    ["groupType"] = "managed",
+    ["statusCode"] = "SUCCESS",
+    ["msg"] = "null",
+    ["statusMessage"] = "null",
+    ["signature"] = "dGVzdA=="
   }
   if username then
     resp["company"] = username
@@ -230,7 +246,7 @@ function obtainTicketHandler()
     ngx.exit(ngx.HTTP_FORBIDDEN)
   end
   local xmlContent = "<ObtainTicketResponse><message></message><prolongationPeriod>" .. prolongationPeriod .. "</prolongationPeriod><responseCode>OK</responseCode><salt>" .. salt .. "</salt><ticketId>1</ticketId><ticketProperties>licensee=" .. username .. "\tlicenseType=0\t</ticketProperties></ObtainTicketResponse>";
-  
+
   local xmlSignature = sign1(xmlContent)
   return "<!-- " .. xmlSignature .. " -->\n" .. xmlContent
 end

@@ -1,4 +1,4 @@
-FROM openresty/openresty:1.19.3.1-1-alpine
+FROM openresty/openresty:1.27.1.2-3-alpine-fat
 
 ADD openresty-rebel/lib /usr/local/openresty/site/lualib
 ADD openresty-rebel/default.conf /etc/nginx/conf.d/default.conf

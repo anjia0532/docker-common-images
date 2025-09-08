@@ -19,16 +19,16 @@ local mt = { __index = _M }
 
 
 local PADDING = {
-    RSA_PKCS1_PADDING = 1,  -- RSA_size - 11
-    RSA_SSLV23_PADDING = 2, -- RSA_size - 11
-    RSA_NO_PADDING = 3,     -- RSA_size
-    RSA_PKCS1_OAEP_PADDING = 4, -- RSA_size - 42
+    RSA_PKCS1_PADDING = 1,
+    RSA_NO_PADDING = 3,
+    RSA_PKCS1_OAEP_PADDING = 4,
 }
 _M.PADDING = PADDING
 
 local KEY_TYPE = {
     PKCS1 = "PKCS#1",
     PKCS8 = "PKCS#8",
+    PKIX = "PKIX",
 }
 local PKCS1_PREFIX = "-----BEGIN RSA "
 _M.KEY_TYPE = KEY_TYPE
@@ -91,6 +91,7 @@ int EVP_PKEY_CTX_ctrl(EVP_PKEY_CTX *ctx, int keytype, int optype,
                       int cmd, int p1, void *p2);
 
 int EVP_PKEY_size(EVP_PKEY *pkey);
+int EVP_PKEY_get_size(EVP_PKEY *pkey);
 
 int EVP_PKEY_encrypt_init(EVP_PKEY_CTX *ctx);
 int EVP_PKEY_encrypt(EVP_PKEY_CTX *ctx,
@@ -153,6 +154,13 @@ if not pcall(function () return C.EVP_MD_CTX_create end) then
 else
     evp_md_ctx_new = C.EVP_MD_CTX_create
     evp_md_ctx_free = C.EVP_MD_CTX_destroy
+end
+
+local evp_pkey_size
+if not pcall(function () return C.EVP_PKEY_size end) then
+    evp_pkey_size = C.EVP_PKEY_get_size
+else
+    evp_pkey_size = C.EVP_PKEY_size
 end
 
 local function ssl_err()
@@ -296,7 +304,9 @@ function _M.new(_, opts)
 
     if opts.public_key then
         key = opts.public_key
-        if opts.key_type == KEY_TYPE.PKCS8 then
+        if opts.key_type == KEY_TYPE.PKIX or
+          opts.key_type == KEY_TYPE.PKCS8 -- for compatible
+        then
             read_func = C.PEM_read_bio_RSA_PUBKEY
         elseif opts.key_type == KEY_TYPE.PKCS1 then
             read_func = C.PEM_read_bio_RSAPublicKey
@@ -385,7 +395,7 @@ function _M.new(_, opts)
         end
     end
 
-    local size = C.EVP_PKEY_size(pkey)
+   local size = evp_pkey_size(pkey)
     return setmetatable({
             pkey = pkey,
             size = size,
