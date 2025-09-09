@@ -38,7 +38,7 @@ jzefE9sKUw==
 ]]
 
 
-_M._VERSION               = '0.03'
+_M._VERSION               = '0.0.3'
 
 local mt                  = { __index = _M }
 
