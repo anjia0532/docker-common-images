@@ -45,6 +45,20 @@ jobs:
           username: ${{ secrets.HUB_NAME }}
           password: ${{ secrets.HUB_PWD }}
 
+      - name: Build openresty-rebel image
+        uses: docker/build-push-action@v6
+        if: github.event.inputs.name == 'openresty-rebel'
+        with:
+          context: openresty-rebel
+          file: openresty-rebel/Dockerfile
+          push: true
+          build-args: |
+            BASE_VERSION=${{ github.event.inputs.version }}
+          tags: |
+            anjia0532/openresty-rebel:${{ github.event.inputs.version }}
+          cache-from: type=registry,ref=anjia0532/openresty-rebel:latest
+          cache-to: type=inline
+
       - name: Build jrebel-license-active-server image
         uses: docker/build-push-action@v6
         if: github.event.inputs.name == 'jrebel-license-active-server'
