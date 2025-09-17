@@ -10,6 +10,7 @@ on:
           - jrebel-license-active-server
           - mydumper
           - synergy-serial
+          - jdk8arthas
           - arthas-alpine
           - arthas-slim
           - arthas-tunnel-server
@@ -20,6 +21,7 @@ on:
           - nginx
           - openresty-rebel
           - yapi
+          - curator
           - curator
       version:
         description: 'Version of application'
