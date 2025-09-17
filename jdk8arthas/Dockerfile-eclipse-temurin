@@ -1,10 +1,10 @@
-FROM openjdk:8-jdk
+ARG BASE_IMAGE=8-jdk-noble
+FROM eclipse-temurin:$BASE_IMAGE
 
 ARG ARTHAS_VERSION="3.7.3"
 ARG MIRROR=false
 ARG TIMEZONE=""
 ENV TZ=Asia/Shanghai
-RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list && \
 
 ENV MAVEN_HOST=https://repo1.maven.org/maven2 \
     MIRROR_MAVEN_HOST=https://maven.aliyun.com/repository/public
