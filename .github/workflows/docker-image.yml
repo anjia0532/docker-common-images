@@ -91,7 +91,7 @@ jobs:
         uses: docker/build-push-action@v6
         if: github.event.inputs.name == 'synergy-serial'
         with:
-          context: arthas
+          context: synergy-serial
           file: synergy-serial/Dockerfile
           push: true
           build-args: |
@@ -99,6 +99,22 @@ jobs:
           tags: |
             anjia0532/synergy-serial:${{ github.event.inputs.version }}
           cache-from: type=registry,ref=anjia0532/synergy-serial:latest
+          cache-to: type=inline
+
+
+      - name: Build Arthas jdk8 ubuntu image
+        uses: docker/build-push-action@v6
+        if: github.event.inputs.name == 'jdk8arthas'
+        with:
+          context: jdk8arthas
+          file: jdk8arthas/Dockerfile
+          push: true
+          build-args: |
+            BASE_IMAGE=${{ github.event.inputs.baseImage }}
+            ARTHAS_VERSION=${{ github.event.inputs.version }}
+          tags: |
+            anjia0532/jdk8arthas-${{ github.event.inputs.baseImage }}:${{ github.event.inputs.version }}
+          cache-from: type=registry,ref=anjia0532/jdk8arthas-${{ github.event.inputs.baseImage }}:latest
           cache-to: type=inline
 
       - name: Build Arthas-Tunnel-Jdk-Slim
