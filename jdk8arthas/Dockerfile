@@ -4,12 +4,12 @@ ARG ARTHAS_VERSION="3.7.3"
 ARG MIRROR=false
 ARG TIMEZONE=""
 ENV TZ=Asia/Shanghai
-RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list && \
 
 ENV MAVEN_HOST=https://repo1.maven.org/maven2 \
     MIRROR_MAVEN_HOST=https://maven.aliyun.com/repository/public
 
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
+    sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list
 
 # if use mirror change to aliyun mirror site
 RUN if $MIRROR; then MAVEN_HOST=${MIRROR_MAVEN_HOST} ; fi && \
