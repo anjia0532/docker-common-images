@@ -7,6 +7,7 @@ on:
         type: choice
         description: Image Type
         options:
+          - canal
           - jrebel-license-active-server
           - mydumper
           - synergy-serial
@@ -46,6 +47,21 @@ jobs:
         with:
           username: ${{ secrets.HUB_NAME }}
           password: ${{ secrets.HUB_PWD }}
+
+      - name: Build canal image
+        uses: docker/build-push-action@v6
+        if: github.event.inputs.name == 'canal'
+        with:
+          context: canal
+          file: canal/Dockerfile
+          push: true
+          build-args: |
+            CANAL_VERSION=${{ github.event.inputs.version }}
+            CANAL_TYPE=${{ github.event.inputs.baseImage }}
+          tags: |
+            anjia0532/canal-${{ github.event.inputs.baseImage }}:${{ github.event.inputs.version }}
+          cache-from: type=registry,ref=anjia0532/canal-${{ github.event.inputs.baseImage }}:latest
+          cache-to: type=inline
 
       - name: Build openresty-rebel image
         uses: docker/build-push-action@v6

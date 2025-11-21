@@ -1,0 +1,39 @@
+FROM openjdk:8-jre
+LABEL maintainer="anjia0532 <anjia0532@gmail.com>"
+
+ARG CANAL_VERSION="1.1.8"
+ARG CANAL_TYPE="server"
+
+ENV TZ=Asia/Shanghai
+ENV CANAL_HOME /app/$CANAL_TYPE
+
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+RUN set -eux; \
+    install_packages curl file net-tools; \
+    \
+    mkdir -p $CANAL_HOME; \
+    \
+    downloadUrl="https://github.com/alibaba/canal/releases/download/canal-$CANAL_VERSION/canal.deployer-$CANAL_VERSION.tar.gz"; \
+    curl -fsSL -o canal.tgz "$downloadUrl"; \
+    tar -xzvf canal.tgz --directory "$CANAL_HOME"; \
+    rm canal.tgz*; \
+    \
+    rm -f $CANAL_HOME/bin/*.bat; \
+    sed -i 's/1>>.*//' "$CANAL_HOME/bin/startup.sh"; \
+    chmod +x $CANAL_HOME/bin/*.sh; \
+    rm -rf $CANAL_HOME/conf/example; \
+    \
+    # fix bug: org.h2.jdbc.JdbcSQLDataException: Value too long for column "CHARACTER VARYING"
+    curl -fsSL -o "$CANAL_HOME/lib/h2-2.2.224.jar" "https://repo1.maven.org/maven2/com/h2database/h2/2.2.224/h2-2.2.224.jar"; \
+    rm -f $CANAL_HOME/lib/h2-2.1.210.jar; \
+    \
+    printf "canal=$CANAL_TYPE\n path=$CANAL_HOME"; \
+    java -version
+
+# 11110 admin , 11111 canal , 11112 metrics, 9100 exporter
+EXPOSE 11110 11111 11112 9100
+
+WORKDIR ${CANAL_HOME}
+
+CMD [ "${CANAL_HOME}/bin/startup.sh" ]
