@@ -4,10 +4,8 @@ LABEL maintainer="anjia0532 <anjia0532@gmail.com>"
 ARG CANAL_VERSION="1.1.8"
 ARG CANAL_TYPE="server"
 
-ENV TZ=Asia/Shanghai
+ENV TZ Asia/Shanghai
 ENV CANAL_HOME /app/$CANAL_TYPE
-
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN set -eux; \
     sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories; \
