@@ -1,4 +1,4 @@
-FROM openjdk:8-jre
+FROM eclipse-temurin:8u472-b08-jre-alpine-3.22
 LABEL maintainer="anjia0532 <anjia0532@gmail.com>"
 
 ARG CANAL_VERSION="1.1.8"
@@ -10,7 +10,11 @@ ENV CANAL_HOME /app/$CANAL_TYPE
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN set -eux; \
-    install_packages curl file net-tools; \
+    sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories; \
+    apk --no-cache add tzdata curl wget net-tools; \
+    \
+    cp /usr/share/zoneinfo/$TZ /etc/localtime; \
+    echo $TZ > /etc/timezone; \
     \
     mkdir -p $CANAL_HOME; \
     \
