@@ -16,7 +16,11 @@ RUN set -eux; \
     \
     mkdir -p $CANAL_HOME; \
     \
-    downloadUrl="https://github.com/alibaba/canal/releases/download/canal-$CANAL_VERSION/canal.deployer-$CANAL_VERSION.tar.gz"; \
+    if [ "$CANAL_TYPE" = "server" ]; then \
+        downloadUrl="https://github.com/alibaba/canal/releases/download/canal-$CANAL_VERSION/canal.deployer-$CANAL_VERSION.tar.gz"; \
+    else \
+        downloadUrl="https://github.com/alibaba/canal/releases/download/canal-$CANAL_VERSION/canal.$CANAL_TYPE-$CANAL_VERSION.tar.gz"; \
+    fi; \
     curl -fsSL -o canal.tgz "$downloadUrl"; \
     tar -xzvf canal.tgz --directory "$CANAL_HOME"; \
     rm canal.tgz*; \
