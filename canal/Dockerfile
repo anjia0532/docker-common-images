@@ -9,7 +9,7 @@ ENV CANAL_HOME /app/$CANAL_TYPE
 
 RUN set -eux; \
     sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories; \
-    apk --no-cache add tzdata curl wget net-tools bash; \
+    apk --no-cache add tzdata curl wget net-tools bash file; \
     \
     cp /usr/share/zoneinfo/$TZ /etc/localtime; \
     echo $TZ > /etc/timezone; \
@@ -42,4 +42,4 @@ EXPOSE 8081 8089 11110 11111 11112 9100
 
 WORKDIR ${CANAL_HOME}
 
-CMD [ "/bin/sh", "-c", "${CANAL_HOME}/bin/startup.sh" ]
+CMD [ "${CANAL_HOME}/bin/startup.sh" ]
