@@ -14,6 +14,10 @@ RUN set -eux; \
     cp /usr/share/zoneinfo/$TZ /etc/localtime; \
     echo $TZ > /etc/timezone; \
     \
+    # 创建 canal-admin 用户和组 \
+    addgroup -S -g 1000 canal-admin &&\
+    adduser -S -u 1000 -G canal-admin canal-admin &&\
+    \
     mkdir -p $CANAL_HOME; \
     \
     if [ "$CANAL_TYPE" = "server" ]; then \
@@ -30,9 +34,12 @@ RUN set -eux; \
     chmod +x $CANAL_HOME/bin/*.sh; \
     rm -rf $CANAL_HOME/conf/example; \
     \
-    # fix bug: org.h2.jdbc.JdbcSQLDataException: Value too long for column "CHARACTER VARYING"
+    # fix bug: org.h2.jdbc.JdbcSQLDataException: Value too long for column "CHARACTER VARYING" \
     curl -fsSL -o "$CANAL_HOME/lib/h2-2.2.224.jar" "https://repo1.maven.org/maven2/com/h2database/h2/2.2.224/h2-2.2.224.jar"; \
     rm -f $CANAL_HOME/lib/h2-2.1.210.jar; \
+    \
+    # 更改目录所有权为 canal-admin 用户 \
+    chown -R canal-admin:canal-admin $CANAL_HOME; \
     \
     printf "canal=$CANAL_TYPE\n path=$CANAL_HOME"; \
     java -version
@@ -42,4 +49,7 @@ EXPOSE 8081 8089 11110 11111 11112 9100
 
 WORKDIR ${CANAL_HOME}
 
-CMD [ "${CANAL_HOME}/bin/startup.sh" ]
+# 使用 canal-admin 用户运行容器
+USER canal-admin
+
+CMD [ "/bin/sh", "-c", "${CANAL_HOME}/bin/startup.sh" ]
