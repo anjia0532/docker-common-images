@@ -9,7 +9,7 @@ ENV CANAL_HOME /app/$CANAL_TYPE
 
 RUN set -eux; \
     sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories; \
-    apk --no-cache add tzdata curl wget net-tools; \
+    apk --no-cache add tzdata curl wget net-tools bash; \
     \
     cp /usr/share/zoneinfo/$TZ /etc/localtime; \
     echo $TZ > /etc/timezone; \
@@ -37,9 +37,9 @@ RUN set -eux; \
     printf "canal=$CANAL_TYPE\n path=$CANAL_HOME"; \
     java -version
 
-# 11110 admin , 11111 canal , 11112 metrics, 9100 exporter
-EXPOSE 11110 11111 11112 9100
+# 8081 adapter 8089 server 11110 admin , 11111 canal , 11112 metrics, 9100 exporter
+EXPOSE 8081 8089 11110 11111 11112 9100
 
 WORKDIR ${CANAL_HOME}
 
-CMD [ "${CANAL_HOME}/bin/startup.sh" ]
+CMD [ "/bin/sh", "-c", "${CANAL_HOME}/bin/startup.sh" ]
